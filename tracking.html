@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Your Rides</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #F5F5F5;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .date {
+            background: #32333A;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 150px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #32333A;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 2px solid #FF8353;
+        }
+
+        .feedback-container {
+            margin-top: 20px;
+        }
+
+        .feedback-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .feedback-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .emoji {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border-radius: 10px;
+            background: #F5E0DA;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .emoji.selected {
+            background: #FF8353;
+        }
+
+        .save-btn {
+            margin-top: 15px;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            background: black;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .back-btn {
+            margin-top: 10px;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            background: #FF8353;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">Tracking your rides</div>
+        <div class="date">18 feb</div>
+
+        <div class="chart-container">
+            <canvas id="rideChart"></canvas>
+        </div>
+
+        <div class="stats">
+            <div><strong>Rides:</strong> <span id="rideCount">3</span> rides</div>
+            <div><strong>Hours:</strong> <span id="rideHours">4</span> hours</div>
+        </div>
+
+        <div class="feedback-container">
+            <div class="feedback-title">How did u like it?</div>
+            <div class="feedback-icons">
+                <div class="emoji" onclick="selectEmoji(this)">😵‍💫</div>
+                <div class="emoji" onclick="selectEmoji(this)">😎</div>
+                <div class="emoji" onclick="selectEmoji(this)">🤢</div>
+            </div>
+        </div>
+
+        <button class="save-btn">SAVE</button>
+        <button class="back-btn" onclick="goToHome()">Back to Home</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            loadData();
+
+            const ctx = document.getElementById("rideChart").getContext("2d");
+
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: ["9:00", "12:00", "14:00", "16:00", "18:00"],
+                    datasets: [{
+                        label: "Rijdtijd in uren",
+                        data: [0.5, 2, 1.5, 0.8, 2],
+                        borderColor: "#FF8353",
+                        backgroundColor: "rgba(255, 131, 83, 0.3)",
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: "#FF8353"
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        });
+
+        function selectEmoji(element) {
+            document.querySelectorAll('.emoji').forEach(e => e.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        function saveData() {
+            const date = document.querySelector('.date').textContent; // Haalt de datum op
+            const rides = document.getElementById('rideCount').textContent;
+            const hours = document.getElementById('rideHours').textContent;
+            const vibe = document.querySelector('.emoji.selected')?.textContent || "Geen vibe";
+
+            const trackingData = { rides, hours, vibe };
+            localStorage.setItem(date, JSON.stringify(trackingData));
+
+            alert("Data opgeslagen!");
+        }
+
+        document.querySelector(".save-btn").addEventListener("click", saveData);
+
+        function loadData() {
+            const date = document.querySelector('.date').textContent;
+            const storedData = localStorage.getItem(date);
+
+            if (storedData) {
+                const { rides, hours, vibe } = JSON.parse(storedData);
+                document.getElementById('rideCount').textContent = rides;
+                document.getElementById('rideHours').textContent = hours;
+
+                document.querySelectorAll('.emoji').forEach(emoji => {
+                    if (emoji.textContent === vibe) {
+                        emoji.classList.add('selected');
+                    }
+                });
+            }
+        }
+
+        function goToHome() {
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+
+</html>

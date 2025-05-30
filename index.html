@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Page</title>
+  <style>
+    .container { padding: 20px; max-width: 400px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+    .header { font-size: 24px; font-weight: bold; }
+    .card { padding: 16px; border-radius: 8px; background: #32333A; color: white; margin-bottom: 16px; display: flex; justify-content: space-between; border: 2px solid #FF8353; }
+    .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; background-color: #32333A; color: white; padding: 10px; border-radius: 10px; border: 2px solid #FF8353; margin-top: 16px; }
+    .day { padding: 8px; text-align: center; border-radius: 4px; cursor: pointer; background-color: #444; }
+    .day:hover { background-color: #FF8353; }
+    .image { width: 100%; border-radius: 8px; }
+    .calendar-header { grid-column: span 7; text-align: center; font-weight: bold; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">Welcome Back, Mauro</div>
+  <img src="img/duke.png" alt="Motorcycle" class="image" />
+  
+  <div class="card">
+    <span>Tracked Days</span>
+    <span>6 days</span>
+  </div>
+  <div class="card">
+    <span>Total Hours</span>
+    <span>144 hours</span>
+  </div>
+
+  <div class="calendar" id="calendar">
+    <div class="calendar-header" id="calendar-title">Kalender</div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
