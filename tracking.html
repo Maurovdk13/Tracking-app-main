@@ -189,7 +189,64 @@
     }
 
     document.querySelector(".save-btn").addEventListener("click", saveData);
-    
+     function loadData(datum) {
+        const storedData = localStorage.getItem(datum);
+        if (storedData) {
+            const { rides, hours, vibe } = JSON.parse(storedData);
+            document.getElementById('rideCount').textContent = rides;
+            document.getElementById('rideHours').textContent = hours;
+
+            document.querySelectorAll('.emoji').forEach(e => {
+                if (e.textContent === vibe) {
+                    e.classList.add('selected');
+                }
+            });
+        }
+    }
+
+    function drawChart(datum) {
+        const ctx = document.getElementById("rideChart").getContext("2d");
+
+        const storedData = localStorage.getItem(datum);
+        let data = [0.5, 2, 1.5, 0.8, 2]; // standaardwaarden
+
+        if (storedData) {
+            const parsed = JSON.parse(storedData);
+            if (parsed.graphData && Array.isArray(parsed.graphData)) {
+                data = parsed.graphData;
+            }
+        }
+
+        new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: ["9:00", "12:00", "14:00", "16:00", "18:00"],
+                datasets: [{
+                    label: "Rijdtijd in uren",
+                    data: data,
+                    borderColor: "#FF8353",
+                    backgroundColor: "rgba(255, 131, 83, 0.3)",
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: "#FF8353"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    function goToHome() {
+        window.location.href = "index.html";
+    }
 
     </script>
 </body>
