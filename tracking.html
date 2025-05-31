@@ -152,76 +152,21 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            loadData();
+        const params = new URLSearchParams(window.location.search);
+        const datum = params.get("datum");
 
-            const ctx = document.getElementById("rideChart").getContext("2d");
-
-            new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: ["9:00", "12:00", "14:00", "16:00", "18:00"],
-                    datasets: [{
-                        label: "Rijdtijd in uren",
-                        data: [0.5, 2, 1.5, 0.8, 2],
-                        borderColor: "#FF8353",
-                        backgroundColor: "rgba(255, 131, 83, 0.3)",
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 5,
-                        pointBackgroundColor: "#FF8353"
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { grid: { display: false } },
-                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        });
-
-        function selectEmoji(element) {
-            document.querySelectorAll('.emoji').forEach(e => e.classList.remove('selected'));
-            element.classList.add('selected');
+        if (!datum) {
+            alert("Geen datum opgegeven.");
+            return;
         }
 
-        function saveData() {
-            const date = document.querySelector('.date').textContent; // Haalt de datum op
-            const rides = document.getElementById('rideCount').textContent;
-            const hours = document.getElementById('rideHours').textContent;
-            const vibe = document.querySelector('.emoji.selected')?.textContent || "Geen vibe";
+        const dateObj = new Date(datum);
+        const formatted = dateObj.toLocaleDateString("nl-NL", { day: 'numeric', month: 'short' });
+        document.querySelector(".date").textContent = formatted;
 
-            const trackingData = { rides, hours, vibe };
-            localStorage.setItem(date, JSON.stringify(trackingData));
-
-            alert("Data opgeslagen!");
-        }
-
-        document.querySelector(".save-btn").addEventListener("click", saveData);
-
-        function loadData() {
-            const date = document.querySelector('.date').textContent;
-            const storedData = localStorage.getItem(date);
-
-            if (storedData) {
-                const { rides, hours, vibe } = JSON.parse(storedData);
-                document.getElementById('rideCount').textContent = rides;
-                document.getElementById('rideHours').textContent = hours;
-
-                document.querySelectorAll('.emoji').forEach(emoji => {
-                    if (emoji.textContent === vibe) {
-                        emoji.classList.add('selected');
-                    }
-                });
-            }
-        }
-
-        function goToHome() {
-            window.location.href = "index.html";
-        }
+        loadData(datum);
+        drawChart(datum);
+    });
     </script>
 </body>
 
